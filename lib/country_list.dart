@@ -15,3 +15,12 @@ Future<List<String>> fetchCountries() async {
     throw Exception('Failed to load countries');
   }
 }
+async function fetchCountries() {
+    const response = await fetch('https://restcountries.com/v3.1/all');
+    if (response.ok) {
+        const data = await response.json();
+        return data.map(country => country.name.common);
+    } else {
+        throw new Error('Failed to fetch countries');
+    }
+}
