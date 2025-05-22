@@ -1,10 +1,12 @@
-import 'app_drawer.dart';
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'add_habit_screen.dart';
 import 'login_screen.dart';
+import 'personal_info_screen.dart';
+import 'reports_screen.dart';
 
 class HabitTrackerScreen extends StatefulWidget {
   final String username;
@@ -86,7 +88,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
               decoration: BoxDecoration(
                 color: Colors.blue.shade700,
               ),
-              child: Text(
+              child: const Text(
                 'Menu',
                 style: TextStyle(
                   color: Colors.white,
@@ -96,24 +98,56 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Configure'),
+              leading: const Icon(Icons.settings),
+              title: const Text('Configure'),
+              onTap: () async {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddHabitScreen(),
+                  ),
+                ).then((updatedHabits) {
+                  _loadUserData(); // Reload data after returning
+                });
+              },
             ),
             ListTile(
-              leading: Icon(Icons.person),
-              title: Text('Personal Info'),
+              leading: const Icon(Icons.person),
+              title: const Text('Personal Info'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const PersonalInfoScreen()),
+                ).then((_) {
+                  _loadUserData(); // Reload data after returning
+                });
+              },
             ),
             ListTile(
-              leading: Icon(Icons.analytics),
-              title: Text('Reports'),
+              leading: const Icon(Icons.analytics),
+              title: const Text('Reports'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ReportsScreen()),
+                );
+              },
             ),
             ListTile(
               leading: Icon(Icons.notifications),
               title: Text('Notifications'),
             ),
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('Sign Out'),
+ListTile(
+  leading: const Icon(Icons.logout),
+  title: const Text('Sign Out'),
+  onTap: () {
+    _signOut(context);
+  },
             ),
           ],
         ),
@@ -145,7 +179,8 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
                     itemCount: selectedHabitsMap.length,
                     itemBuilder: (context, index) {
                       String habit = selectedHabitsMap.keys.elementAt(index);
-                      Color habitColor = _getHabitColor(habit, selectedHabitsMap);
+                      Color habitColor =
+                          _getHabitColor(habit, selectedHabitsMap);
                       return Dismissible(
                         key: Key(habit),
                         direction: DismissDirection.endToStart,
@@ -177,7 +212,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
                     },
                   ),
                 ),
-          Divider(),
+          const Divider(),
           const Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
@@ -202,7 +237,8 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
                     itemCount: completedHabitsMap.length,
                     itemBuilder: (context, index) {
                       String habit = completedHabitsMap.keys.elementAt(index);
-                      Color habitColor = _getHabitColor(habit, completedHabitsMap);
+                      Color habitColor =
+                          _getHabitColor(habit, completedHabitsMap);
                       return Dismissible(
                         key: Key(habit),
                         direction: DismissDirection.startToEnd,
@@ -228,7 +264,8 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
                             ],
                           ),
                         ),
-                        child: _buildHabitCard(habit, habitColor, isCompleted: true),
+                        child: _buildHabitCard(habit, habitColor,
+                            isCompleted: true),
                       );
                     },
                   ),
@@ -247,15 +284,26 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
                   _loadUserData(); // Reload data after returning
                 });
               },
-              child: Icon(Icons.add),
               backgroundColor: Colors.blue.shade700,
               tooltip: 'Add Habits',
+              child: const Icon(Icons.add),
             )
           : null,
     );
   }
 
-  Widget _buildHabitCard(String title, Color color, {bool isCompleted = false}) {
+  void _signOut(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+    );
+  }
+
+  Widget _buildHabitCard(String title, Color color,
+      {bool isCompleted = false}) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       color: color,
@@ -270,7 +318,9 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
               fontSize: 16,
             ),
           ),
-          trailing: isCompleted ? Icon(Icons.check_circle, color: Colors.green, size: 28) : null,
+          trailing: isCompleted
+              ? const Icon(Icons.check_circle, color: Colors.green, size: 28)
+              : null,
         ),
       ),
     );
