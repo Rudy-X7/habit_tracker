@@ -1,9 +1,9 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'add_habit_screen.dart';
+import 'login_screen.dart';
 
 class HabitTrackerScreen extends StatefulWidget {
   final String username;
@@ -77,6 +77,46 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
         ),
         automaticallyImplyLeading: true,
       ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue.shade700,
+              ),
+              child: Text(
+                'Menu',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Configure'),
+            ),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: Text('Personal Info'),
+            ),
+            ListTile(
+              leading: Icon(Icons.analytics),
+              title: Text('Reports'),
+            ),
+            ListTile(
+              leading: Icon(Icons.notifications),
+              title: Text('Notifications'),
+            ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('Sign Out'),
+            ),
+          ],
+        ),
+      ),
       body: Column(
         children: [
           const Padding(
@@ -104,8 +144,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
                     itemCount: selectedHabitsMap.length,
                     itemBuilder: (context, index) {
                       String habit = selectedHabitsMap.keys.elementAt(index);
-                      Color habitColor =
-                          _getHabitColor(habit, selectedHabitsMap);
+                      Color habitColor = _getHabitColor(habit, selectedHabitsMap);
                       return Dismissible(
                         key: Key(habit),
                         direction: DismissDirection.endToStart,
@@ -162,8 +201,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
                     itemCount: completedHabitsMap.length,
                     itemBuilder: (context, index) {
                       String habit = completedHabitsMap.keys.elementAt(index);
-                      Color habitColor =
-                          _getHabitColor(habit, completedHabitsMap);
+                      Color habitColor = _getHabitColor(habit, completedHabitsMap);
                       return Dismissible(
                         key: Key(habit),
                         direction: DismissDirection.startToEnd,
@@ -189,8 +227,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
                             ],
                           ),
                         ),
-                        child: _buildHabitCard(habit, habitColor,
-                            isCompleted: true),
+                        child: _buildHabitCard(habit, habitColor, isCompleted: true),
                       );
                     },
                   ),
@@ -217,8 +254,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
     );
   }
 
-  Widget _buildHabitCard(String title, Color color,
-      {bool isCompleted = false}) {
+  Widget _buildHabitCard(String title, Color color, {bool isCompleted = false}) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       color: color,
@@ -233,9 +269,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
               fontSize: 16,
             ),
           ),
-          trailing: isCompleted
-              ? Icon(Icons.check_circle, color: Colors.green, size: 28)
-              : null,
+          trailing: isCompleted ? Icon(Icons.check_circle, color: Colors.green, size: 28) : null,
         ),
       ),
     );
